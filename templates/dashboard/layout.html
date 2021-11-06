@@ -1,0 +1,71 @@
+{% extends 'base.html' %} 
+{% block content %}
+<div class="flex flex-col">
+	<section>
+		<nav class="relative">
+			<div class="p-6 flex items-center bg-base-100 shadow">
+				{% include "components/logo.html" %}
+				<ul class="hidden lg:flex">
+					<li>
+						<a class="flex ml-10 mr-10 items-center text-gray-600 hover:text-gray-800 text-sm" href="/">
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+								/>
+							</svg>
+							<span class="ml-2 font-semibold">Home</span>
+          </a>
+        </li>
+        <li>
+          <a class="flex mr-10 items-center text-gray-600 hover:text-gray-800  text-sm" href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+  <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM14 11a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1h-1a1 1 0 110-2h1v-1a1 1 0 011-1z" />
+</svg>
+            <span class="ml-2 font-semibold">Dashboard</span>
+          </a>
+        </li>
+      </ul>
+      <ul class="hidden xl:flex lg:justify-end lg:items-center lg:space-x-6 mr-6 ml-auto">
+        <li>
+          <a class="text-gray-600 hover:text-gray-500" href="#">
+         
+          </a>
+        </li>
+        <li>
+          <a class="text-gray-600 hover:text-gray-500" href="#">
+           
+          </a>
+        </li>
+      </ul>
+      <div class="hidden lg:block">
+        <button class="flex items-center">
+          <div class="mr-3">
+            <p class="text-sm text-gray-800">Sammy Harris</p>
+            <p class="text-sm text-gray-600">Developer</p>
+          </div>
+          <div class="mr-2">
+            <img class="w-10 h-10 rounded-full object-cover object-right" src="https://images.unsplash.com/photo-1635902549184-cf89a051e463?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=715&q=80" alt="photo">
+          </div>
+          <span>
+           
+          </span>
+        </button>
+      </div>
+      <div class="ml-auto flex lg:hidden">
+        <button class="navbar-burger flex items-center rounded focus:outline-none">
+          <svg class="text-white bg-indigo-500 hover:bg-indigo-600 block h-8 w-8 p-2 rounded" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+            <title>Mobile menu</title>
+            <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+</section>
+
+{% block dashboard_content %}  
+  
+
+  
+{% endblock %}
+</div>
+{% endblock content %}

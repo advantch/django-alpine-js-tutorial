@@ -1,0 +1,60 @@
+{% load static i18n %}
+<!DOCTYPE html>
+{% get_current_language as language_code %}
+
+<html lang="{{ language_code }}">
+
+<head>
+  <title>{% spaceless %}{% block title %}Home{% endblock %}{% endspaceless %} </title>
+  <meta charset="UTF-8">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  {# site meta and seo meta tags, override on specific pages as necessary. #}
+
+  {% block site_meta %}{% endblock %}
+  {% block seo-meta %}
+    <meta name="robots" content="index,follow">
+  {% endblock %}
+
+  {% block extra_css %}{% endblock %}
+  {% block head_js %}{% endblock %}
+
+<link href="{% static 'css/site.css' %}" rel="stylesheet" type="text/css" />
+
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@1.16.1/dist/full.css" rel="stylesheet" type="text/css" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" type="text/css" />
+
+
+  {# Alpine and app scripts #}
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>  
+
+
+</head>
+
+<body id="id-body" class="{{theme}}">
+<div>
+  <div class="flex h-screen antialiased overflow-x-hidden bg-base-200 text-base-content">
+
+    <div class="{% block page_wrapper_class %}h-full w-full overflow-hidden fixed{% endblock %}">
+      {# content goes here #}
+      {% block content %}{% endblock %}
+
+
+    </div>
+  </div>
+  <div class="fixed bottom-left" id="consent_section"></div>
+  {{request.user.get_cached_user_settings|json_script:"userSettings"}}
+</div>
+{% block footer_js %}
+
+  <script>
+
+   
+  </script>
+
+{% endblock %}
+
+</body>
+</html>

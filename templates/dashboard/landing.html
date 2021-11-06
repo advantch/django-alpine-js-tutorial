@@ -1,0 +1,180 @@
+{% extends 'dashboard/layout.html' %}{% load static %} {% block dashboard_content %}
+<div x-data='admin()' class="flex flex-col">
+	<div class="w-full lg:max-w-7xl flex justify-between align-items-center mt-10 p-2 lg:px-6">
+		<div class="text-lg md:text-3xl font-bold breadcrumbs">
+			<ul>
+				<li>
+					<a @click="changeView('index')">Dashboard</a>
+				</li>
+				<li x-show="activeView.key !== 'index' ">
+					<a x-text="activeView.name"></a>
+				</li>
+			</ul>
+		</div>
+
+		<a x-show="activeView.key !== 'index'" x-cloak @click="changeView('index')" class="btn btn-primary btn-sm mt-2">
+			<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+				<path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z"
+				 clip-rule="evenodd" />
+			</svg>
+			<span>Back</span>
+    </a>
+   
+    </div>
+	
+
+	<div class="p-6 lg:max-w-7xl mt-6 mb-20">
+		<div x-show="activeView.key === 'index'" class="grid grid-cols-2 gap-10 xl:grid-cols-5">
+			<template x-for="(app, index) in apps" :key="app.name">
+				<div @click="changeView(app.key)" class="card side bg-base-100 compact shadow dark:shadow-lg hover:shadow-xl bordered pointer">
+					<div class="flex flex-col justify-start p-4 text-primary ">
+						<div class="flex flex-row mx-auto">
+							<img :src="app.icon" height="24" width="24"/>
+                    <h2 class="text-lg text-base-content ml-3 font-bold" x-text="app.name"></h2>
+                </div>
+            
+            </div>
+            </div>
+        </template>
+        </div>
+
+        <div x-show="activeView.key == 'chart'" x-cloak>
+        {% include "dashboard/components/charts.html" %}
+        </div>
+
+        <div x-show="activeView.key == 'todo'" x-cloak>
+        {% include "dashboard/components/todo.html" %}
+        </div>
+
+    </div>
+
+</div>
+{{todos|json_script:"todos"}}
+{% endblock %}
+
+{% block footer_js %}
+  {{ block.super }}
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.0.2/dist/echarts.min.js"></script>
+
+  <script type="text/javascript" src="{% static "js/charts.js" %}"></script>  <script>
+
+    let chartComponent;
+
+    const index = {
+      name: "home", id: 1, key: "index",
+    }
+    const adminApps = {
+      todo: {
+        name: "Todo App", id: 2, key: "todo",
+       icon: "{% static "icons/list.svg" %}",
+        description: "todo app"
+      },
+      chart: {
+        name: "Chart App", id: 3, key: "chart",
+        icon: "{% static "icons/chart.svg" %}",
+        description: "chart app"
+      },
+    }
+
+    function admin() {
+      return {
+        views: adminApps,
+        apps: adminApps,
+        activeView: index,
+        data: {
+          chart: {
+            data: [],
+            isLoading:[]
+          },
+          todo: {
+              list:[],
+              isLoading:[]
+          }
+        },
+        hasNavigated: true,
+        loading: false,
+        appList: ["todo", "charts"],
+        init() {
+          this.views = {index, ...adminApps}
+          // check for key from url
+          let key = new URLSearchParams(location.search).get("view")
+          if (this.appList.includes(key)) {
+            this.changeView(key)
+          }
+          // after dom content loaded
+          // set view for index page and add listener
+          this.$nextTick(() => {
+            if(key===null || key !== null && !this.appList.includes(key)){
+              this.updateHistoryState('index', true)
+            }
+            this.setPopStateEventListener()
+          })
+        },
+        setPopStateEventListener(){
+          //https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event
+          window.onpopstate = () => setTimeout(()=> {
+            console.log(this.checkNavigationUpdated())
+            if(!this.checkNavigationUpdated()){
+              console.log("nav incomplete")
+              let url= new URL(window.location)
+              let key = url.searchParams.get('view')
+              this.changeView(key)
+            }
+          }, 0);
+          this.checkNavigationUpdated()
+        },
+        checkNavigationUpdated(){
+          let url= new URL(window.location)
+          return this.activeView.key === url.searchParams.get('view')
+        },
+        async changeView(key) {
+          this.loading = true
+          // fetch relevant data for view and navigate to view
+          try {
+            this.activeView = this.views[key]
+            this.updateHistoryState(key)
+            await this.setupView(key)
+          } catch (e) {
+            console.log(`${e} Error loading view`)
+          }
+
+          this.loading = false
+        },
+        updateHistoryState(view, replace=false){
+          try {
+            console.info(`update view to ${view}`)
+            const url = new URL(window.location);
+            url.searchParams.set('view', view);
+            replace ? window.history.replaceState({}, '', url) : window.history.pushState({}, '', url);
+          }catch(e){
+             console.log(`${e} Error updating history state`)
+          }
+        },
+        async setupView(key) {
+
+         // update todos
+          if (key === this.apps.todo.key) {
+              this.data.todo.isLoading = true,
+              this.data.todo.list = JSON.parse(document.getElementById('todos').textContent)
+              this.data.todo.isLoading = false
+          }
+
+         // update chart view
+          if (key === this.apps.chart.key) {
+
+            chartComponent = echarts.init(document.getElementById('chartArea'));
+            chartComponent.setOption(buildChartOptions())
+            setTimeout(chartComponent.resize(), 100)
+            
+          }
+        }
+      }
+    }
+
+    //resize chart on window reload
+    window.onresize = function() {
+        chartComponent.resize();
+    };
+
+  </script>
+  {% endblock %}

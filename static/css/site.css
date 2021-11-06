@@ -1,0 +1,9 @@
+[x-cloak] {
+    display: none;
+}
+
+.chart-container {
+    height: 400px;
+    width: 600px;
+    
+}
