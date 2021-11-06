@@ -1,43 +1,44 @@
-# Developing Django on Repl.it
+# Advantch Django AlpineJS Tutorial
 
-- Fork this template to get started
-- Simply hit run to start the server
-- The server will autoreload as needed. You don't need to restart the server manually.
+## Getting Started
 
-## Add your first view
+### Installing Dependencies
 
-1. Create a file under `mysite` named `views.py` with the following contents:
+#### Python 3.7
 
-```
-from django.http import HttpResponse
+Follow instructions to install the latest version of python for your platform 
+in the [python docs](https://docs.python.org/3/using/unix.html#getting-and-installing-the-latest-version-of-python)
 
+#### Virtual Enviornment
 
-def index(request):
-    return HttpResponse("Hello, world.")
-```
+We recommend working within a virtual environment whenever using Python for projects. 
+This keeps your dependencies for each project separate and organaized. 
+Instructions for setting up a virual enviornment for your platform can be found in
+ the [python docs](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
 
-2. Add a url pattern under `mysite/urls.py`. It should look like this:
+#### PIP Dependencies
 
-```
-from django.contrib import admin
-from django.urls import path
-from . import views
+Once you have your virtual environment setup, run the following to install the project requirements:
 
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', views.index, name='index'),
-]
+```bash
+pip install -r requirements.txt
 ```
 
-## Shell
 
-Django utilizes the shell for managing your site. For this click on the `?` in the lower-right corner and click "Workspace shortcuts" from there you can open a new shell pane. 
+## Running the server
 
-## Database
+To run the server
 
-By default this template utilizes the sqlite database engine. While this is fine for development it won't work with external users of your app as we don't persist changes to files when they happen outside the development environment. 
+```bash
 
-We suggest bringing a database using an outside service. 
+python manage.py runserver
+```
 
-See Django documentation on how to setup a database: https://docs.djangoproject.com/en/3.0/intro/tutorial02/
+## Testing
+```bash
+pytest
 
+```
+
+## Authors
+Thembelani Mahlangu
