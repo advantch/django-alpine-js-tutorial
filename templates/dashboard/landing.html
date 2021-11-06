@@ -1,5 +1,5 @@
 {% extends 'dashboard/layout.html' %}{% load static %} {% block dashboard_content %}
-<div x-data='admin()' class="flex flex-col">
+<div x-data='dashboard()' class="flex flex-col">
 	<div class="w-full lg:max-w-7xl flex justify-between align-items-center mt-10 p-2 lg:px-6">
 		<div class="text-lg md:text-3xl font-bold breadcrumbs">
 			<ul>
@@ -47,134 +47,24 @@
         </div>
 
     </div>
-
 </div>
-{{todos|json_script:"todos"}}
+
 {% endblock %}
 
 {% block footer_js %}
   {{ block.super }}
+
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.0.2/dist/echarts.min.js"></script>
 
-  <script type="text/javascript" src="{% static "js/charts.js" %}"></script>  <script>
+  {# load any variables required by our scripts that have to be rendered using django templates #}
 
-    let chartComponent;
-
-    const index = {
-      name: "home", id: 1, key: "index",
-    }
-    const adminApps = {
-      todo: {
-        name: "Todo App", id: 2, key: "todo",
-       icon: "{% static "icons/list.svg" %}",
-        description: "todo app"
-      },
-      chart: {
-        name: "Chart App", id: 3, key: "chart",
-        icon: "{% static "icons/chart.svg" %}",
-        description: "chart app"
-      },
-    }
-
-    function admin() {
-      return {
-        views: adminApps,
-        apps: adminApps,
-        activeView: index,
-        data: {
-          chart: {
-            data: [],
-            isLoading:[]
-          },
-          todo: {
-              list:[],
-              isLoading:[]
-          }
-        },
-        hasNavigated: true,
-        loading: false,
-        appList: ["todo", "charts"],
-        init() {
-          this.views = {index, ...adminApps}
-          // check for key from url
-          let key = new URLSearchParams(location.search).get("view")
-          if (this.appList.includes(key)) {
-            this.changeView(key)
-          }
-          // after dom content loaded
-          // set view for index page and add listener
-          this.$nextTick(() => {
-            if(key===null || key !== null && !this.appList.includes(key)){
-              this.updateHistoryState('index', true)
-            }
-            this.setPopStateEventListener()
-          })
-        },
-        setPopStateEventListener(){
-          //https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event
-          window.onpopstate = () => setTimeout(()=> {
-            console.log(this.checkNavigationUpdated())
-            if(!this.checkNavigationUpdated()){
-              console.log("nav incomplete")
-              let url= new URL(window.location)
-              let key = url.searchParams.get('view')
-              this.changeView(key)
-            }
-          }, 0);
-          this.checkNavigationUpdated()
-        },
-        checkNavigationUpdated(){
-          let url= new URL(window.location)
-          return this.activeView.key === url.searchParams.get('view')
-        },
-        async changeView(key) {
-          this.loading = true
-          // fetch relevant data for view and navigate to view
-          try {
-            this.activeView = this.views[key]
-            this.updateHistoryState(key)
-            await this.setupView(key)
-          } catch (e) {
-            console.log(`${e} Error loading view`)
-          }
-
-          this.loading = false
-        },
-        updateHistoryState(view, replace=false){
-          try {
-            console.info(`update view to ${view}`)
-            const url = new URL(window.location);
-            url.searchParams.set('view', view);
-            replace ? window.history.replaceState({}, '', url) : window.history.pushState({}, '', url);
-          }catch(e){
-             console.log(`${e} Error updating history state`)
-          }
-        },
-        async setupView(key) {
-
-         // update todos
-          if (key === this.apps.todo.key) {
-              this.data.todo.isLoading = true,
-              this.data.todo.list = JSON.parse(document.getElementById('todos').textContent)
-              this.data.todo.isLoading = false
-          }
-
-         // update chart view
-          if (key === this.apps.chart.key) {
-
-            chartComponent = echarts.init(document.getElementById('chartArea'));
-            chartComponent.setOption(buildChartOptions())
-            setTimeout(chartComponent.resize(), 100)
-            
-          }
-        }
-      }
-    }
-
-    //resize chart on window reload
-    window.onresize = function() {
-        chartComponent.resize();
-    };
-
+  {{chart_data|json_script:"chartData"}} {# backend provided json data#}
+  <script>
+    const listIconUrl = "{% static "icons/list.svg" %}"
+    const chartIconUrl = "{% static "icons/list.svg" %}"
   </script>
-  {% endblock %}
+
+  <script type="text/javascript" src="{% static 'js/charts.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
+
+{% endblock %}

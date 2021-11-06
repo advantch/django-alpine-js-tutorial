@@ -1,2 +1,3 @@
 django
 black
+django-ninja

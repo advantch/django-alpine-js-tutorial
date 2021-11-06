@@ -44,12 +44,28 @@
 
     </div>
   </div>
-  <div class="fixed bottom-left" id="consent_section"></div>
-  {{request.user.get_cached_user_settings|json_script:"userSettings"}}
 </div>
 {% block footer_js %}
 
+  <script type="text/javascript" src="{% static 'js/cookie.js' %}"></script>
+  <script src="https://unpkg.com/swagger-client"></script>
   <script>
+    // Cookie func
+    const csrftoken = getCookie('csrftoken');
+    const authHeaders = {'X-CSRFToken': csrftoken}
+
+    // the application uses the swagger js client to interact with the api
+    // if you are building a separate frontend, consult the docs on how to generate a client in typescript
+    const client = SwaggerClient('/api/schema/', {
+      requestInterceptor: (req) => {
+        req.headers['X-CSRFToken'] = csrftoken;
+        req.headers['Content-Type'] = 'application/json';
+        return req;
+      },
+    })
+
+    //uncomment to log api endpoints to console for debugging purposes
+    client.then(client => console.log(client.apis))
 
    
   </script>

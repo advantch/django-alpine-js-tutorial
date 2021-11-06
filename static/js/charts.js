@@ -1,4 +1,4 @@
-function buildChartOptions (){
+function buildChartOptions (chartData){
     return  {
         backgroundColor: '#2c343c',
         title: {
@@ -26,13 +26,7 @@ function buildChartOptions (){
             type: 'pie',
             radius: '55%',
             center: ['50%', '50%'],
-            data: [
-                { value: 335, name: 'Direct' },
-                { value: 310, name: 'Email' },
-                { value: 274, name: 'Union Ads' },
-                { value: 235, name: 'Video Ads' },
-                { value: 400, name: 'Search Engine' }
-            ].sort(function (a, b) {
+            data: chartData.sort(function (a, b) {
                 return a.value - b.value;
             }),
             roseType: 'radius',
