@@ -2,11 +2,13 @@ from typing import Optional
 from django.utils import timezone
 from ninja import ModelSchema
 from .models import Todo
+from datetime import datetime
+
 
 
 class TodoSchema(ModelSchema):
 
-    created: Optional = timezone.now()
+    created: Optional[datetime] = timezone.now()
     status: Optional[str] = "outstanding"
 
     class Config:
